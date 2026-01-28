@@ -2,25 +2,18 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
-  cors: {
-    origin: "*", // Permite conexiones desde cualquier IP de tu red
-    methods: ["GET", "POST"]
-  }
+  cors: { origin: "*" }
 });
-const mongoose = require('mongoose');
 
+// ESTO ES LO QUE TE FALTA: Enviar el archivo HTML en lugar de solo texto
 app.get('/', (req, res) => {
-  res.send('<h1>Servidor de Chat Corriendo</h1>');
+  res.sendFile(__dirname + '/front.html');
 });
 
-// --- Lógica de Socket.io ---
 io.on('connection', (socket) => {
-  console.log('✅ Usuario conectado:', socket.id);
+  console.log('✅ Usuario conectado id:', socket.id);
 
-  // Escuchar mensaje del cliente
   socket.on('chat message', (msg) => {
-    console.log('Mensaje recibido:', msg);
-    // Reenviar mensaje a TODOS los usuarios conectados
     io.emit('chat message', msg);
   });
 
@@ -29,7 +22,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = 3000;
-http.listen(PORT, '0.0.0.0', () => { 
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+// El '0.0.0.0' permite que otros te vean en la red
+http.listen(3000, '0.0.0.0', () => {
+  console.log('🚀 Servidor corriendo en http://localhost:3000');
 });

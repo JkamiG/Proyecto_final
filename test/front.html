@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Socket.io Chat</title>
+<head>
+    <title>Chat Local</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-      body { font-family: sans-serif; padding: 20px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 8px; margin-bottom: 10px; background: #f4f4f4; border-radius: 5px; }
-      form { display: flex; position: fixed; bottom: 20px; width: 90%; }
-      input { flex: 1; padding: 10px; }
-      button { padding: 10px; }
+        body { margin: 0; padding-bottom: 3rem; font-family: sans-serif; }
+        #form { background: rgba(0, 0, 0, 0.1); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+        #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+        #messages { list-style-type: none; margin: 0; padding: 0; }
+        #messages > li { padding: 0.5rem 1rem; }
+        #messages > li:nth-child(odd) { background: #efefef; }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <ul id="messages"></ul>
-    <form id="form">
-      <input id="input" autocomplete="off" placeholder="Escribe un mensaje..." /><button>Enviar</button>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" /><button>Enviar</button>
     </form>
 
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script>
-      // REEMPLAZA 'localhost' por la IP de tu PC (ej. 192.168.1.15)
-      const socket = io('http://192.168.19.41');
+      // Al dejarlo vacío, se conecta automáticamente a la IP que le dio el archivo
+      const socket = io(); 
 
       const form = document.getElementById('form');
       const input = document.getElementById('input');
@@ -41,5 +42,5 @@
         window.scrollTo(0, document.body.scrollHeight);
       });
     </script>
-  </body>
+</body>
 </html>
