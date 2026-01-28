@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.io Chat</title>
+    <style>
+      body { font-family: sans-serif; padding: 20px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 8px; margin-bottom: 10px; background: #f4f4f4; border-radius: 5px; }
+      form { display: flex; position: fixed; bottom: 20px; width: 90%; }
+      input { flex: 1; padding: 10px; }
+      button { padding: 10px; }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form id="form">
+      <input id="input" autocomplete="off" placeholder="Escribe un mensaje..." /><button>Enviar</button>
+    </form>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+      // REEMPLAZA 'localhost' por la IP de tu PC (ej. 192.168.1.15)
+      const socket = io('http://192.168.19.41');
+
+      const form = document.getElementById('form');
+      const input = document.getElementById('input');
+      const messages = document.getElementById('messages');
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit('chat message', input.value);
+          input.value = '';
+        }
+      });
+
+      socket.on('chat message', (msg) => {
+        const item = document.createElement('li');
+        item.textContent = msg;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+    </script>
+  </body>
+</html>
