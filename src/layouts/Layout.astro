@@ -3,7 +3,6 @@ import Servers from "../components/Servers.astro"
 import Users from "../components/Users.astro"
 import Apps from "../components/Apps.astro"
 ---
-
 <!doctype html>
 <html lang="es">
 	<head>
@@ -26,7 +25,9 @@ import Apps from "../components/Apps.astro"
 			</section>
 		</div>
 		<div class="botom-bar">
-			<Apps />
+			<div class="apps-container">
+				<Apps />
+			</div>
 		</div>
 	</body>
 </html>
@@ -65,16 +66,37 @@ import Apps from "../components/Apps.astro"
 		background-color: #272727;
 		position: sticky;
 	}
+
 	.botom-bar {
 		background-color: rgb(70, 70, 70);
 		width: 100%;
 		height: 5vh;
 		transition: all 0.3s ease;
+		opacity: 0.1;
+		
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		overflow: hidden;
 	}
-	.botom-bar:hover{
-		background-color: rgb(70, 70, 70);
-		width: 100%;
+
+	.botom-bar:hover {
+		background-color: rgb(60, 60, 60);
 		height: 15vh;
+		opacity: 1;
+	}
+
+	.apps-container {
+		opacity: 0;
+		transform: translateY(20px);
 		transition: all 0.3s ease;
+		pointer-events: none;
+	}
+
+	.botom-bar:hover .apps-container {
+		opacity: 1;
+		transform: translateY(0);
+		pointer-events: auto;
+		transition-delay: 0.1s;
 	}
 </style>
