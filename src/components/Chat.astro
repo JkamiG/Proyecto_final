@@ -1,0 +1,344 @@
+---
+// Chat.astro
+---
+
+<div class="chat-wrapper">
+    <header class="chat-header">
+        <span class="hashtag">#</span>
+        <span class="channel-name">general</span>
+    </header>
+
+    <div class="messages-container" id="messages-container">
+        <!-- Mock initial messages -->
+        <div class="message">
+            <div class="avatar">
+                <img
+                    src="https://ui-avatars.com/api/?name=System&background=random"
+                    alt="System"
+                />
+            </div>
+            <div class="message-content">
+                <span class="username">System</span>
+                <span class="timestamp">Today at 12:00 PM</span>
+                <p class="text">
+                    Welcome to the general channel! This is the start of the
+                    #general channel.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="input-area">
+        <div class="input-wrapper">
+            <button class="add-btn" type="button">
+                <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        d="M12 5V19"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"></path>
+                    <path
+                        d="M5 12H19"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"></path>
+                </svg>
+            </button>
+            <input
+                type="text"
+                id="chat-input"
+                placeholder="Message #general"
+                autocomplete="off"
+            />
+        </div>
+    </div>
+</div>
+
+<script>
+    import { io } from "socket.io-client";
+
+    // Connect to the same hostname as the browser is using, but on port 3000
+    // This allows it to work on local IP addresses (e.g. 192.168.x.x)
+    const socket = io(`http://${window.location.hostname}:3000`);
+
+    const input = document.getElementById("chat-input") as HTMLInputElement;
+    const container = document.getElementById(
+        "messages-container",
+    ) as HTMLDivElement;
+    const sendBtn = document.querySelector(".add-btn") as HTMLButtonElement;
+
+    function addMessage(text: string, isMe = false) {
+        if (!container) return;
+
+        const messageEl = document.createElement("div");
+        messageEl.className = "message";
+
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+
+        // Simple XSS prevention
+        const escapedText = text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+
+        // Color/Avatar distinction could be added here if we had user IDs
+        // For now, everyone looks same-ish or we randomize slightly
+        const username = isMe ? "You" : "User";
+        const avatarUrl = isMe
+            ? "https://ui-avatars.com/api/?name=You&background=0D8ABC&color=fff"
+            : `https://ui-avatars.com/api/?name=User&background=random`;
+
+        messageEl.innerHTML = `
+          <div class="avatar">
+            <img src="${avatarUrl}" alt="${username}" />
+          </div>
+          <div class="message-content">
+            <span class="username">${username}</span>
+            <span class="timestamp">Today at ${timeString}</span>
+            <p class="text">${escapedText}</p>
+          </div>
+        `;
+
+        container.appendChild(messageEl);
+
+        // Auto-scroll
+        requestAnimationFrame(() => {
+            container.scrollTop = container.scrollHeight;
+        });
+    }
+
+    // LISTENER: Receive message
+    socket.on("chat message", (msg: string) => {
+        // We received a message. Use simple heuristic:
+        // If we just sent it, we might have appended it already?
+        // Actually, the server broadcasts to everyone including sender.
+        // To avoid duplicating, we can either:
+        // A) Don't append locally on send, wait for echo (best for consistency)
+        // B) Check content (flaky)
+
+        // Let's go with A: Wait for echo.
+        addMessage(msg, false);
+    });
+
+    // SENDER
+    function sendMessage() {
+        if (!input) return;
+        const text = input.value;
+        if (text.trim() !== "") {
+            socket.emit("chat message", text);
+            input.value = "";
+            // We do NOT addMessage here, we wait for the socket.on event
+        }
+    }
+
+    if (input && container) {
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Ensure send button works too
+        if (sendBtn) {
+            sendBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                sendMessage();
+            });
+        }
+
+        container.scrollTop = container.scrollHeight;
+    }
+</script>
+
+<style>
+    .chat-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        /* Parent layout provides background, but we can darken it slightly if needed */
+        background-color: rgba(0, 0, 0, 0.1);
+        color: #dcddde;
+        font-family:
+            system-ui,
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Roboto,
+            Oxygen,
+            Ubuntu,
+            Cantarell,
+            "Open Sans",
+            "Helvetica Neue",
+            sans-serif;
+    }
+
+    .chat-header {
+        height: 48px;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+        font-weight: 600;
+        font-size: 16px;
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .hashtag {
+        color: #96989d;
+        margin-right: 8px;
+        font-size: 24px;
+        line-height: 24px;
+    }
+
+    .channel-name {
+        color: #fff;
+    }
+
+    .messages-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Scrollbar Styling */
+    .messages-container::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        background-color: #2b2d31;
+    }
+    .messages-container::-webkit-scrollbar-thumb {
+        background-color: #1a1b1e;
+        border-radius: 4px;
+    }
+    .messages-container::-webkit-scrollbar-track {
+        background-color: #2b2d31;
+    }
+
+    .message {
+        display: flex;
+        padding: 4px 16px;
+        margin-top: 8px;
+        min-height: 44px; /* Ensure touch targets */
+    }
+
+    .message:hover {
+        background-color: rgba(0, 0, 0, 0.08);
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        margin-right: 16px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        transition: opacity 0.2s;
+    }
+    .avatar img:hover {
+        opacity: 0.8;
+    }
+
+    .message-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .username {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #fff;
+        margin-right: 0.5rem;
+        cursor: pointer;
+    }
+    .username:hover {
+        text-decoration: underline;
+    }
+
+    .timestamp {
+        font-size: 0.75rem;
+        color: #a3a6aa;
+        margin-left: 0.25rem;
+    }
+
+    .text {
+        margin: 2px 0 0 0;
+        font-size: 0.95rem;
+        line-height: 1.375rem;
+        color: #dcddde;
+        word-wrap: break-word; /* Handle long words */
+    }
+
+    .input-area {
+        padding: 0 16px 24px;
+        flex-shrink: 0;
+        margin-top: 10px;
+    }
+
+    .input-wrapper {
+        background-color: #383a40; /* Slightly lighter than typical dark bg to stand out */
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        transition: background-color 0.2s;
+    }
+
+    .input-wrapper:focus-within {
+        background-color: #40444b;
+    }
+
+    .add-btn {
+        background: transparent;
+        border: none;
+        color: #b9bbbe;
+        cursor: pointer;
+        margin-right: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 0;
+    }
+
+    .add-btn:hover {
+        color: #dcddde;
+    }
+
+    #chat-input {
+        background: transparent;
+        border: none;
+        color: #dcddde;
+        font-size: 1rem;
+        padding: 12px 0;
+        width: 100%;
+        outline: none;
+        height: 44px;
+    }
+
+    #chat-input::placeholder {
+        color: #72767d;
+    }
+</style>
