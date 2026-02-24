@@ -1,7 +1,3 @@
-# Projecte Final
-## Grup 18
-
-
 graph TD
     subgraph CLIENTS [Capa de Client: Usuaris]
         Browser[Navegador Web\n(Escriptori/Mòbil)]
