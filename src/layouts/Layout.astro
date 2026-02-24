@@ -32,7 +32,7 @@ import Apps from "../components/Apps.astro"
 	</body>
 </html>
 
-<style>
+<style is:global>
 	html,
 	body {
 		margin: 0;
@@ -41,6 +41,7 @@ import Apps from "../components/Apps.astro"
 		background-color: #333;
 		display: flex;
 		flex-direction: column;
+		font-family: sans-serif;
 	}
 	.hero {
 		display: flex;

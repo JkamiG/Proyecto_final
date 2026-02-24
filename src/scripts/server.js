@@ -9,8 +9,11 @@ const __dirname = dirname(__filename);
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: { origin: "*" }
+const io = require("socket.io")(httpServer, {
+  cors: {
+    origin: "https://example.com",
+    methods: ["GET", "POST"]
+  }
 });
 
 app.get('/', (req, res) => {
@@ -32,3 +35,4 @@ io.on('connection', (socket) => {
 httpServer.listen(3000, '0.0.0.0', () => {
   console.log('🚀 Servidor corriendo en http://localhost:3000');
 });
+

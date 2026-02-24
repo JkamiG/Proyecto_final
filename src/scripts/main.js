@@ -18,3 +18,10 @@ socket.on('chat message', (msg) => {
     messages.appendChild(item);
     window.scrollTo(0, document.body.scrollHeight);
 });
+
+const io = require("socket.io")(httpServer, {
+  cors: {
+    origin: "https://example.com",
+    methods: ["GET", "POST"]
+  }
+});
