@@ -1,30 +1,31 @@
+```mermaid
 graph TD
     subgraph CLIENTS [Capa de Client: Usuaris]
-        Browser[Navegador Web\n(Escriptori/Mòbil)]
-        MobileApp[App Mòbil Nativa\n(iOS/Android)]
+        Browser["Navegador Web<br>(Escriptori/Mòbil)"]
+        MobileApp["App Mòbil Nativa<br>(iOS/Android)"]
     end
 
     subgraph EDGE [Capa d'Accés i Distribució Global]
-        CF[AWS CloudFront\n(CDN - Xarxa de Distribució de Contingut)]
-        ALB[AWS Application Load Balancer\n(Gestió de tràfic HTTP/WS i SSL)]
+        CF["AWS CloudFront<br>(CDN - Xarxa de Distribució de Contingut)"]
+        ALB["AWS Application Load Balancer<br>(Gestió de tràfic HTTP/WS i SSL)"]
     end
 
     subgraph FRONTEND_HOSTING [Allotjament Frontend Estàtic]
-        S3[AWS S3 Bucket\n(Fitxers Astro: HTML, CSS, JS Estàtic)]
+        S3["AWS S3 Bucket<br>(Fitxers Astro: HTML, CSS, JS Estàtic)"]
     end
 
-    subgraph BACKEND_VPC [AWS VPC - Núvol Privat Virtual (Seguretat)]
+    subgraph BACKEND_VPC [AWS VPC - Núvol Privat Virtual Seguretat]
         subgraph COMPUTE [Capa de Computació / Temps Real]
-            ECS[AWS ECS Fargate Cluster\n(Contenidors Docker)]
+            ECS["AWS ECS Fargate Cluster<br>(Contenidors Docker)"]
             subgraph NODE_APP [Servidor Node.js]
-                SocketIO[Socket.io Server\n(Comunicació Bidireccional)]
-                API[REST/GraphQL API\n(Lògica de negoci)]
+                SocketIO["Socket.io Server<br>(Comunicació Bidireccional)"]
+                API["REST/GraphQL API<br>(Lògica de negoci)"]
             end
         end
 
         subgraph DATA [Capa de Dades]
-            RDS[(AWS RDS PostgreSQL\nBase de dades principal:\nUsuaris, Xats, Servidors)]
-            Redis[(AWS ElastiCache Redis\nOpcional: Gestió de sessions ràpides i 'pub/sub' per escalar Socket.io)]
+            RDS[("AWS RDS PostgreSQL<br>Base de dades principal:<br>Usuaris, Xats, Servidors")]
+            Redis[("AWS ElastiCache Redis<br>Opcional: Gestió de sessions ràpides i 'pub/sub' per escalar Socket.io")]
         end
     end
 
@@ -36,7 +37,7 @@ graph TD
     %% Flux del Backend (Socket.io i API)
     Browser -- "3. Connexió WebSocket (wss://) / API Calls" --> ALB
     MobileApp -- "Connexió WebSocket / API Calls" --> ALB
-    
+
     ALB -- "4. Balanç de càrrega" --> ECS
     ECS --> SocketIO
     ECS --> API
@@ -44,9 +45,9 @@ graph TD
     %% Flux de Dades Intern
     SocketIO -- "5. Lectura/Escriptura dades" --> RDS
     API -- "Lectura/Escriptura dades" --> RDS
-    
+
     SocketIO -.-> Redis
-    
+
     %% Estils del diagrama (mermaid)
     classDef aws fill:#ff9900,stroke:#232f3e,color:white;
     classDef db fill:#336699,stroke:#232f3e,color:white,shape:cylinder;
