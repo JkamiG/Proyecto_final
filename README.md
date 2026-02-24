@@ -1,3 +1,7 @@
+# Projecte Final
+## Grup 18
+
+
 ```mermaid
 graph TD
     subgraph CLIENTS [Capa de Client: Usuaris]
