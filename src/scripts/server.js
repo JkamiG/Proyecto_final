@@ -9,9 +9,9 @@ const __dirname = dirname(__filename);
 
 const app = express();
 const httpServer = createServer(app);
-const io = require("socket.io")(httpServer, {
+const io = new Server(httpServer, {
   cors: {
-    origin: "https://example.com",
+    origin: "*", // Allow all origins for local development
     methods: ["GET", "POST"]
   }
 });

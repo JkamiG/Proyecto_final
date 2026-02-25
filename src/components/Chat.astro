@@ -19,9 +19,7 @@
             <div class="message-content">
                 <span class="username">Conkort Admin</span>
                 <span class="timestamp">Hoy a la 16:02</span>
-                <p class="text">
-                    Este es el Chat Principal, hecho con React
-                </p>
+                <p class="text">Este es el Chat Principal, hecho con React</p>
             </div>
         </div>
     </div>
@@ -118,16 +116,12 @@
     }
 
     // LISTENER: Receive message
-    socket.on("chat message", (msg: string) => {
-        // We received a message. Use simple heuristic:
-        // If we just sent it, we might have appended it already?
-        // Actually, the server broadcasts to everyone including sender.
-        // To avoid duplicating, we can either:
-        // A) Don't append locally on send, wait for echo (best for consistency)
-        // B) Check content (flaky)
-
-        // Let's go with A: Wait for echo.
-        addMessage(msg, false);
+    socket.on("chat message", (data: any) => {
+        if (typeof data === "string") {
+            addMessage(data, false);
+        } else {
+            addMessage(data.text, data.sender === socket.id);
+        }
     });
 
     // SENDER
@@ -135,7 +129,7 @@
         if (!input) return;
         const text = input.value;
         if (text.trim() !== "") {
-            socket.emit("chat message", text);
+            socket.emit("chat message", { text, sender: socket.id });
             input.value = "";
             // We do NOT addMessage here, we wait for the socket.on event
         }
