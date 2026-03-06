@@ -1,8 +1,45 @@
 ---
-import Layout from "../layouts/Layout.astro"
-import Chat from "../components/Chat.astro"
+import Layout from "../layouts/LayoutLogin.astro"
+import "../styles/global.css"
 ---
 
 <Layout>
-    <Chat>
+    <div class="page">
+        <section class="left-side">
+            <div class="box-right">
+
+            </div>
+        </section>
+        <section class="right-side">
+            <div class="box-left">
+                
+            </div>
+        </section>
+    </div>
 </Layout>
+
+<style>
+    *{
+        padding: 0;
+        margin: 0;
+    }
+    .page{
+        background-color: var(--fondo-body);
+        width: 90%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        margin: 0 auto;
+    }
+
+    .left-side{
+        width: 60%;
+        height: 70%;
+        border: solid 1px rgb(255, 255, 255);
+    }
+    .right-side{
+        width: 40%;
+        height: 70%;
+        border: solid 1px rgb(255, 255, 255);
+    }
+</style>
