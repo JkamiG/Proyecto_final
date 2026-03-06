@@ -6,13 +6,24 @@ import "../styles/global.css"
 <Layout>
     <div class="page">
         <section class="left-side">
-            <div class="box-right">
-
+            <div class="box-left">
+                <div class="bienvenida">
+                    <h1>Bienvenido <br> de nuevo!</h1>
+                    <p>Estabamos esperando, pasate y mira lo que sucede a tu alrededor</p>
+                </div>
             </div>
         </section>
         <section class="right-side">
-            <div class="box-left">
-                
+            <div class="box-right">
+                <div class="login">
+                    <h2>Iniciar Sesión</h2>
+                    <form action="">
+                        <div class="boton-section">
+                            <button type="button" class="boton">Google</button>
+                            <button type="button" class="boton">GitHub</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </section>
     </div>
@@ -22,24 +33,60 @@ import "../styles/global.css"
     *{
         padding: 0;
         margin: 0;
+        color: rgb(0, 0, 0);
     }
     .page{
-        background-color: var(--fondo-body);
+        background-color: rgba(var(--fondo-body), 0.8);
         width: 90%;
         height: 100vh;
         display: flex;
         align-items: center;
         margin: 0 auto;
+        background-size: cover;
     }
 
     .left-side{
         width: 60%;
         height: 70%;
         border: solid 1px rgb(255, 255, 255);
+        padding: 2rem;
     }
     .right-side{
         width: 40%;
         height: 70%;
         border: solid 1px rgb(255, 255, 255);
+        padding: 2rem;
+    }
+    .box-right{
+
+    }
+    .box-left{
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .bienvenida h1{
+        font-size: 5rem;
+        font-weight: 900;
+        line-height: 0.74;
+    }
+
+    .login h2{
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    .boton-section{
+        background-color: rgba(128, 128, 128, 0.388);
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-around;
+        margin-top: 3rem;
+        padding: 0.3rem;
+    }
+    .boton-section *{
+        padding: 1rem 2rem;
     }
 </style>
